@@ -1,5 +1,7 @@
 body {
+    margin: 0;
     font-family: Arial, sans-serif;
+    text-align: center;
 }
 
 /* Navbar */
@@ -7,7 +9,6 @@ body {
     background-color: black;
     padding: 15px;
     border: 2px solid red;
-    text-align: center;
 }
 
 .navbar a {
@@ -18,42 +19,32 @@ body {
 }
 
 .navbar a:hover {
-    color: white;
+    color: yellow;
     background-color: brown;
+    padding: 5px 10px;
+    border-radius: 5px;
 }
 
-h1 {
-    color: red;
+/* Profile Card */
+.profile-card {
+    margin-top: 40px;
 }
 
-#heading {
-    color: blue;
+.profile-card img {
+    width: 250px;
+    height: auto;
+    border-radius: 10px;
 }
 
-.other {
-    color: green;
-}
-
-.para {
-    color: purple;
-    border: 2px solid black;
-    padding: 20px;
-    width: 60%;
-    margin: 20px auto;
-    text-align: center;
-}
-
-a {
-    color: orange;
+.name {
+    font-size: 40px;
     font-weight: bold;
-    text-decoration: none;
+    margin-top: 15px;
+    margin-bottom: 5px;
 }
 
-a:hover {
-    color: darkorange;
-    text-decoration: underline;
-}
-
-body {
-    margin: 8px;
+.gender {
+    font-size: 20px;
+    color: gray;
+    margin-top: 0;
 }

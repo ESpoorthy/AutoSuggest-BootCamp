@@ -14,12 +14,12 @@ body {
     color: aquamarine;
     text-decoration: none;
     margin: 0 15px;
-    border: 2px solid red;
     font-weight: bold;
 }
 
 .navbar a:hover {
-    color: yellow;
+    color: white;
+    background-color: brown;
 }
 
 h1 {

@@ -6,7 +6,7 @@ body {
 .navbar {
     background-color: black;
     padding: 15px;
-    border: 2px red;
+    border: 2px solid red;
     text-align: center;
 }
 
@@ -14,7 +14,7 @@ body {
     color: aquamarine;
     text-decoration: none;
     margin: 0 15px;
-    border: 2px red;
+    border: 2px solid red;
     font-weight: bold;
 }
 

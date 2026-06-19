@@ -53,3 +53,7 @@ a:hover {
     color: darkorange;
     text-decoration: underline;
 }
+
+body {
+    margin: 8px;
+}

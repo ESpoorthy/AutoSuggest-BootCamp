@@ -1,0 +1,20 @@
+{
+  "name": "autosuggest-bootcamp",
+  "version": "1.0.0",
+  "description": "Verifying my git set-up :) Changes flow for pushing  1. add(push button) 2. commit with message 3. push/sync",
+  "homepage": "https://github.com/ESpoorthy/AutoSuggest-BootCamp#readme",
+  "bugs": {
+    "url": "https://github.com/ESpoorthy/AutoSuggest-BootCamp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ESpoorthy/AutoSuggest-BootCamp.git"
+  },
+  "license": "ISC",
+  "author": "Sai Spoorthy E",
+  "type": "commonjs",
+  "main": "Server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

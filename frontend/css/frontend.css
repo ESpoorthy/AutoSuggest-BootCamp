@@ -13,6 +13,7 @@ body {
     color: aquamarine;
     text-decoration: none;
     margin: 0 15px;
+    border: 2px red;
     font-weight: bold;
 }
 

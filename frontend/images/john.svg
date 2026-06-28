@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <!-- Background -->
+  <rect width="500" height="500" fill="#3b7fa4"/>
+  <!-- Shadow of the head and shoulders -->
+  <path d="M250,110 L390,350 L390,500 L250,500 Z" fill="#2b5e7a" opacity="0.3"/>
+  <!-- Body/Suit (gray) -->
+  <path d="M100,500 C100,400 150,330 250,330 C350,330 400,400 400,500 Z" fill="#4a4a4a"/>
+  <!-- White shirt v-neck -->
+  <path d="M200,330 L300,330 L250,420 Z" fill="#ffffff"/>
+  <!-- Purple Tie -->
+  <path d="M235,400 L265,400 L275,500 L225,500 Z" fill="#9b4dca"/>
+  <!-- Tie Knot -->
+  <path d="M235,390 L265,390 L270,415 L230,415 Z" fill="#803ba8"/>
+  <!-- Collar (dark gray) -->
+  <path d="M190,330 L220,380 L235,330 Z" fill="#333333"/>
+  <path d="M310,330 L280,380 L265,330 Z" fill="#333333"/>
+  <!-- Neck (skin tone) -->
+  <rect x="220" y="270" width="60" height="70" rx="5" fill="#fddcb4"/>
+  <path d="M220,320 C220,320 250,350 280,320 L280,340 L220,340 Z" fill="#e5b88f"/>
+  <!-- Head/Face (skin tone) -->
+  <circle cx="250" cy="200" r="80" fill="#fddcb4"/>
+  <!-- Ears -->
+  <circle cx="165" cy="200" r="15" fill="#fddcb4"/>
+  <circle cx="335" cy="200" r="15" fill="#fddcb4"/>
+  <!-- Hair (black, neat style) -->
+  <path d="M170,200 C170,110 330,110 330,200 C330,180 320,160 300,150 C280,140 250,145 250,145 C250,145 220,140 200,150 C180,160 170,180 170,200 Z" fill="#2d2d2d"/>
+  <!-- Sideburns -->
+  <path d="M170,180 L170,210 L180,210 Z" fill="#2d2d2d"/>
+  <path d="M330,180 L330,210 L320,210 Z" fill="#2d2d2d"/>
+</svg>

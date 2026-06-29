@@ -75,7 +75,11 @@ http://localhost:3000
 ```
 
 ---
+## Deployed Server
 
+https://autosuggestbootcamp.onrender.com
+
+---
 ## 📂 Project Structure
 
 ```

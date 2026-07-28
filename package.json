@@ -13,9 +13,10 @@
   "license": "ISC",
   "author": "Sai Spoorthy E",
   "type": "commonjs",
-  "main": "Server.js",
+  "main": "Server.js/Server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node Server.js/Server.js",
+    "test": "node --check Server.js/Server.js && node --check frontend/js/frontend.js"
   },
   "dependencies": {
     "express": "^5.2.1"

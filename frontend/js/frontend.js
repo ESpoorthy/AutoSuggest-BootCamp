@@ -7,12 +7,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const clearSearchBtn = document.getElementById("clear-search-btn");
     const gitTimelineList = document.getElementById("git-timeline-list");
     const contributionsGrid = document.getElementById("contributions-grid");
+    const pulseSummary = document.getElementById("pulse-summary");
+    const refreshPulseBtn = document.getElementById("refresh-pulse-btn");
+    const commandChips = document.querySelectorAll(".command-chip");
+    const generatedCountStat = document.getElementById("generated-count");
+    const currentUserStat = document.getElementById("current-user-stat");
+    const activeThemeStat = document.getElementById("active-theme-stat");
+    const commitCountStat = document.getElementById("commit-count-stat");
+    const appToast = document.getElementById("app-toast");
     
     // Navbar Menu Links
     const navHome = document.getElementById("nav-home");
     const navCard = document.getElementById("nav-card");
     const navToggle = document.getElementById("nav-toggle");
     const navRandom = document.getElementById("nav-random");
+    const navGit = document.getElementById("nav-git");
 
     // Card Elements
     const idCardElement = document.getElementById("id-card-element");
@@ -26,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const cardDate = document.getElementById("card-date");
     const cardBarcodeText = document.getElementById("card-barcode-text");
     const nextUserBtn = document.getElementById("next-user-btn");
+    const copyIdBtn = document.getElementById("copy-id-btn");
 
     // ==========================================
     // STATE & POOL MANAGEMENT
@@ -34,6 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let userPool = [];
     let suggestionsMatches = []; 
     let highlightedIndex = -1;
+    let generatedCount = 0;
+    let toastTimeout = null;
 
     // Helper to generate dynamic SVG avatar based on name & gender
     function getDynamicAvatar(gender, seed) {
@@ -109,6 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
             isCommand: true,
             icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent);"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>`,
             description: "Action &bull; Create/fetch a random user profile",
+            keywords: ["random", "random user", "next", "generate", "profile", "new user"],
             action: () => fetchNextRandomUser()
         },
         {
@@ -116,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
             isCommand: true,
             icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent);"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>`,
             description: "Action &bull; Switch theme colors (Light/Dark)",
+            keywords: ["toggle", "theme", "dark", "light", "mode", "color"],
             action: () => toggleTheme()
         },
         {
@@ -123,12 +137,84 @@ document.addEventListener("DOMContentLoaded", () => {
             isCommand: true,
             icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent);"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
             description: "Action &bull; Scroll to Git contributions pulse graph",
-            action: () => {
-                const el = document.getElementById("pulse-section");
-                if (el) el.scrollIntoView({ behavior: "smooth" });
-            }
+            keywords: ["git", "pulse", "commit", "timeline", "history", "repo", "repository"],
+            action: () => scrollToPulse()
+        },
+        {
+            name: "Refresh Git Pulse",
+            isCommand: true,
+            icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent);"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>`,
+            description: "Action &bull; Reload latest repository activity",
+            keywords: ["refresh", "reload", "git", "pulse", "commits"],
+            action: () => loadGitPulse({ announce: true })
+        },
+        {
+            name: "Copy Member ID",
+            isCommand: true,
+            icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent);"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
+            description: "Action &bull; Copy the active ID card number",
+            keywords: ["copy", "member", "id", "badge", "card"],
+            action: () => copyMemberId()
         }
     ];
+
+    function searchableText(item) {
+        return [
+            item.name,
+            item.description,
+            item.gender,
+            item.location,
+            ...(item.keywords || [])
+        ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+    }
+
+    function showToast(message) {
+        if (!appToast) return;
+        appToast.textContent = message;
+        appToast.classList.add("show");
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            appToast.classList.remove("show");
+        }, 2400);
+    }
+
+    function updateDashboardStats() {
+        if (generatedCountStat) generatedCountStat.textContent = generatedCount.toString();
+        if (currentUserStat) currentUserStat.textContent = activeUser?.name || "—";
+        if (activeThemeStat) {
+            activeThemeStat.textContent = document.documentElement.classList.contains("dark-mode") ? "Dark" : "Light";
+        }
+    }
+
+    function scrollToPulse() {
+        const pulseSection = document.getElementById("pulse-section");
+        if (pulseSection) {
+            pulseSection.scrollIntoView({ behavior: "smooth" });
+        }
+    }
+
+    function syncCardFlipState() {
+        const isFlipped = idCardElement.classList.contains("flipped");
+        idCardElement.setAttribute("aria-pressed", isFlipped.toString());
+        idCardElement.setAttribute("aria-label", isFlipped ? "Interactive ID Card. Showing details side." : "Interactive ID Card. Showing profile side.");
+    }
+
+    async function copyMemberId() {
+        const memberId = cardUid.textContent.trim();
+        try {
+            if (navigator.clipboard && memberId) {
+                await navigator.clipboard.writeText(memberId);
+                showToast(`Copied ${memberId}`);
+            } else {
+                showToast(`Member ID: ${memberId}`);
+            }
+        } catch (error) {
+            showToast(`Member ID: ${memberId}`);
+        }
+    }
 
     // ==========================================
     // THEME CONTROLLER (Goal-3: TOGGLE)
@@ -140,11 +226,14 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             document.documentElement.classList.remove("dark-mode");
         }
+        updateDashboardStats();
     }
 
     function toggleTheme() {
         const isDark = document.documentElement.classList.toggle("dark-mode");
         localStorage.setItem("theme", isDark ? "dark" : "light");
+        updateDashboardStats();
+        showToast(`${isDark ? "Dark" : "Light"} mode active`);
     }
 
     // ==========================================
@@ -181,6 +270,23 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    if (navGit) {
+        navGit.addEventListener("click", (e) => {
+            e.preventDefault();
+            scrollToPulse();
+        });
+    }
+
+    commandChips.forEach((chip) => {
+        chip.addEventListener("click", () => {
+            const command = chip.dataset.command;
+            if (command === "random") fetchNextRandomUser();
+            if (command === "theme") toggleTheme();
+            if (command === "git") scrollToPulse();
+            if (command === "copy") copyMemberId();
+        });
+    });
+
     // ==========================================
     // CARD CONTROLLER (Goal-2: CARD)
     // ==========================================
@@ -202,22 +308,26 @@ document.addEventListener("DOMContentLoaded", () => {
             cardBarcodeText.textContent = user.barcode;
 
             idCardElement.classList.remove("updating");
+            updateDashboardStats();
         }, 150);
     }
 
     // Toggle card flip on click
     idCardElement.addEventListener("click", () => {
         idCardElement.classList.toggle("flipped");
+        syncCardFlipState();
     });
 
     idCardElement.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             idCardElement.classList.toggle("flipped");
+            syncCardFlipState();
         }
     });
 
     renderCard(activeUser);
+    syncCardFlipState();
 
     // ==========================================
     // NEXT RANDOM USER ENGINE (Goal-4: NEXT RANDOM USER)
@@ -255,9 +365,12 @@ document.addEventListener("DOMContentLoaded", () => {
             // Add user to suggestions search pool
             userPool.push(parsedUser);
             activeUser = parsedUser;
+            generatedCount += 1;
+            showToast(`Generated ${name}`);
             
             if (idCardElement.classList.contains("flipped")) {
                 idCardElement.classList.remove("flipped");
+                syncCardFlipState();
                 setTimeout(() => renderCard(activeUser), 300);
             } else {
                 renderCard(activeUser);
@@ -285,8 +398,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             userPool.push(fallbackUser);
             activeUser = fallbackUser;
+            generatedCount += 1;
+            showToast(`Generated ${selectedName} from offline fallback`);
             if (idCardElement.classList.contains("flipped")) {
                 idCardElement.classList.remove("flipped");
+                syncCardFlipState();
                 setTimeout(() => renderCard(activeUser), 300);
             } else {
                 renderCard(activeUser);
@@ -303,6 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     nextUserBtn.addEventListener("click", fetchNextRandomUser);
+    copyIdBtn.addEventListener("click", copyMemberId);
 
     // ==========================================
     // AUTOSUGGEST ENGINE (Goal-1: NAVBAR AutoSuggest)
@@ -335,13 +452,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 `;
             } else {
-                row.innerHTML = `
-                    <img src="${item.avatar}" alt="${item.name}" class="suggestion-avatar">
-                    <div class="suggestion-info">
-                        <span class="suggestion-name">${item.name}</span>
-                        <span class="suggestion-sub">${item.gender.toUpperCase()} &bull; ${item.location}</span>
-                    </div>
-                `;
+                const avatar = document.createElement("img");
+                avatar.src = item.avatar;
+                avatar.alt = item.name;
+                avatar.className = "suggestion-avatar";
+
+                const info = document.createElement("div");
+                info.className = "suggestion-info";
+
+                const name = document.createElement("span");
+                name.className = "suggestion-name";
+                name.textContent = item.name;
+
+                const meta = document.createElement("span");
+                meta.className = "suggestion-sub";
+                meta.textContent = `${item.gender.toUpperCase()} • ${item.location}`;
+
+                info.append(name, meta);
+                row.append(avatar, info);
             }
 
             row.addEventListener("click", () => {
@@ -394,8 +522,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         clearSearchBtn.style.display = "flex";
 
-        const matchedCommands = searchCommands.filter(cmd => cmd.name.toLowerCase().includes(query));
-        const matchedUsers = userPool.filter(user => user.name.toLowerCase().includes(query));
+        const matchedCommands = searchCommands.filter(cmd => searchableText(cmd).includes(query));
+        const matchedUsers = userPool.filter(user => searchableText(user).includes(query));
 
         const matches = [...matchedCommands, ...matchedUsers];
         renderSuggestions(matches);
@@ -441,16 +569,41 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
     // GIT PULSE WIDGET (Goal-5: GIT PULSE)
     // ==========================================
-    async function loadGitPulse() {
+    async function loadGitPulse({ announce = false } = {}) {
+        if (refreshPulseBtn) {
+            refreshPulseBtn.disabled = true;
+            refreshPulseBtn.textContent = "Refreshing...";
+        }
+        if (gitTimelineList) {
+            gitTimelineList.innerHTML = `<div class="loading-spinner">Loading repository commits...</div>`;
+        }
+
         try {
             const response = await fetch("/api/git-pulse");
+            if (!response.ok) throw new Error("Git Pulse request failed");
             const commits = await response.json();
             
             renderGitTimeline(commits);
             renderContributionGrid(commits);
+            if (commitCountStat) commitCountStat.textContent = commits.length.toString();
+            if (pulseSummary) {
+                const latest = commits[0];
+                pulseSummary.textContent = latest
+                    ? `Latest commit #${latest.hash} by ${latest.author}: ${latest.message}`
+                    : "No repository activity available yet.";
+            }
+            if (announce) showToast(`Git Pulse refreshed • ${commits.length} commits`);
         } catch (error) {
             console.error("Pulse API error:", error);
             gitTimelineList.innerHTML = `<div class="timeline-item">Failed to fetch commit history.</div>`;
+            if (commitCountStat) commitCountStat.textContent = "0";
+            if (pulseSummary) pulseSummary.textContent = "Could not load repository activity right now.";
+            if (announce) showToast("Git Pulse refresh failed");
+        } finally {
+            if (refreshPulseBtn) {
+                refreshPulseBtn.disabled = false;
+                refreshPulseBtn.textContent = "Refresh";
+            }
         }
     }
 
@@ -487,15 +640,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderContributionGrid(commits) {
         contributionsGrid.innerHTML = "";
+        const commitSignal = commits
+            .map(commit => commit.hash)
+            .join("")
+            .split("")
+            .reduce((total, char) => total + char.charCodeAt(0), commits.length);
         
         for (let i = 0; i < 24; i++) {
             const cell = document.createElement("div");
             
-            let level = 0;
-            if (i % 7 === 0) level = 1;
-            else if (i % 5 === 0) level = 2;
-            else if (i % 8 === 0) level = 3;
-            else if (i === 2 || i === 9 || i === 18 || i === 23) level = 4;
+            const hasRecentCommit = i >= Math.max(0, 24 - commits.length);
+            let level = hasRecentCommit ? ((commitSignal + i * 3) % 4) + 1 : 0;
+            if (commits.length > 6 && i % 5 === 0) level = Math.min(4, level + 1);
             
             cell.className = `grid-cell lvl-${level}`;
             
@@ -514,6 +670,8 @@ document.addEventListener("DOMContentLoaded", () => {
             contributionsGrid.appendChild(cell);
         }
     }
+
+    refreshPulseBtn.addEventListener("click", () => loadGitPulse({ announce: true }));
 
     // Load initial timeline logs
     loadGitPulse();

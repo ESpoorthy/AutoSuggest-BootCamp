@@ -204,7 +204,7 @@ html:not(.dark-mode) .nav-links a {
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
 }
 
-.search-input-wrapper input:focus + .search-icon {
+.search-input-wrapper:focus-within .search-icon {
     color: var(--accent);
 }
 
@@ -397,6 +397,84 @@ html.dark-mode .moon-icon {
     max-width: 600px;
 }
 
+.command-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.command-chip {
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    color: var(--text-primary);
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+}
+
+.command-chip:hover {
+    color: white;
+    background: var(--accent-gradient);
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.metric-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 30px;
+}
+
+.metric-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+.metric-value {
+    display: block;
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--accent);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.metric-label {
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 900px) {
+    .metric-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 540px) {
+    .metric-strip {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Dashboard Grid Layout */
 .dashboard-grid {
     display: grid;
@@ -580,6 +658,48 @@ html.dark-mode .moon-icon {
     0% { transform: scale(0.9); opacity: 0.6; }
     50% { transform: scale(1.2); opacity: 1; }
     100% { transform: scale(0.9); opacity: 0.6; }
+}
+
+.pulse-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mini-btn {
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--accent);
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.mini-btn:hover:not(:disabled) {
+    color: white;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.mini-btn:disabled {
+    cursor: wait;
+    opacity: 0.6;
+}
+
+.pulse-summary {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.45;
+    margin-bottom: 16px;
+    padding: 10px 12px;
 }
 
 /* Contribution Graph */
@@ -1012,6 +1132,8 @@ html.dark-mode .grid-cell.lvl-4 { background-color: #39d353; }
     width: 100%;
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
     margin-top: 10px;
 }
 
@@ -1044,6 +1166,27 @@ html.dark-mode .grid-cell.lvl-4 { background-color: #39d353; }
 
 .primary-btn:active {
     transform: translateY(0);
+}
+
+.secondary-btn {
+    border: 1px solid var(--border-color);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--accent);
+    background-color: var(--bg-primary);
+    padding: 12px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.secondary-btn:hover {
+    color: white;
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 .glow-effect {
@@ -1079,4 +1222,28 @@ html.dark-mode .grid-cell.lvl-4 { background-color: #39d353; }
     font-size: 12px;
     color: var(--text-secondary);
     margin-top: 60px;
+}
+
+.toast {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 2000;
+    max-width: min(360px, calc(100vw - 48px));
+    color: white;
+    background: var(--accent-gradient);
+    border-radius: 999px;
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(16px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
 }

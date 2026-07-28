@@ -22,6 +22,7 @@
             <a href="#" id="nav-card">Card</a>
             <a href="#" id="nav-toggle">Toggle</a>
             <a href="#" id="nav-random">Random user</a>
+            <a href="#" id="nav-git">Git Pulse</a>
         </div>
         
         <!-- Search bar with Suggestions dropdown -->
@@ -45,6 +46,32 @@
             <h1>Bootcamp Completion Dashboard</h1>
             <p>A unified portal featuring auto-suggest searching, interactive card flipping, theme toggling, and live git analysis.</p>
         </div>
+
+        <section class="command-strip" aria-label="Quick app actions">
+            <button type="button" class="command-chip" data-command="random">Generate user</button>
+            <button type="button" class="command-chip" data-command="theme">Toggle theme</button>
+            <button type="button" class="command-chip" data-command="git">View Git Pulse</button>
+            <button type="button" class="command-chip" data-command="copy">Copy member ID</button>
+        </section>
+
+        <section class="metric-strip" aria-label="Live app stats">
+            <div class="metric-card">
+                <span class="metric-value" id="generated-count">0</span>
+                <span class="metric-label">Generated this session</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value" id="current-user-stat">John Doe</span>
+                <span class="metric-label">Current profile</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value" id="active-theme-stat">Light</span>
+                <span class="metric-label">Active theme</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value" id="commit-count-stat">—</span>
+                <span class="metric-label">Git Pulse commits</span>
+            </div>
+        </section>
 
         <div class="dashboard-grid">
             
@@ -132,6 +159,9 @@
                             </svg>
                             Generate Next User
                         </button>
+                        <button id="copy-id-btn" class="secondary-btn" type="button">
+                            Copy Member ID
+                        </button>
                     </div>
                 </section>
             </div>
@@ -141,11 +171,15 @@
                 <section class="dashboard-panel pulse-panel" id="pulse-section">
                     <div class="panel-header">
                         <h2>Git Pulse Activity Monitor</h2>
-                        <span class="live-indicator">
-                            <span class="dot"></span> LIVE
-                        </span>
+                        <div class="pulse-actions">
+                            <button type="button" id="refresh-pulse-btn" class="mini-btn">Refresh</button>
+                            <span class="live-indicator">
+                                <span class="dot"></span> LIVE
+                            </span>
+                        </div>
                     </div>
                     <p class="panel-subtitle">Repository commitment history and automated activity pulse graph.</p>
+                    <div class="pulse-summary" id="pulse-summary">Waiting for repository activity...</div>
 
                     <!-- GitHub Style Contribution Grid -->
                     <div class="contribution-container">
@@ -177,6 +211,8 @@
     <footer class="footer">
         <p>&copy; 2026 Bootcamp Hub. All rights reserved. Built for AutoSuggest & ID Card portfolio goals.</p>
     </footer>
+
+    <div class="toast" id="app-toast" role="status" aria-live="polite"></div>
 
     <script src="js/frontend.js"></script>
 </body>

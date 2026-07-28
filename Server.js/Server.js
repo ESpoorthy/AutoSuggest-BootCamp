@@ -1,15 +1,16 @@
 const express = require("express");
 const path = require("path");
-const { exec } = require("child_process");
+const { execFile } = require("child_process");
 
 const app = express();
+const projectRoot = path.join(__dirname, "..");
 
 // Serve static files from frontend folder
 app.use(express.static(path.join(__dirname, "../frontend")));
 
 // Endpoint to fetch git commits for Git Pulse widget
 app.get("/api/git-pulse", (req, res) => {
-    exec('git log -n 10 --pretty=format:"%h|%an|%ar|%s"', (error, stdout, stderr) => {
+    execFile("git", ["-C", projectRoot, "log", "-n", "10", "--pretty=format:%h|%an|%ar|%s"], { timeout: 3000 }, (error, stdout) => {
         if (error || !stdout.trim()) {
             // Return mock/placeholder commits if not in a git repo or if git fails
             return res.json([
